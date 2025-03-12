@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Bank - Services</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>OUR BANK</h1>
+        <p>Banking at Your Doorstep</p>
+    </header>
+
+    <div class="container">
+        <nav>
+            <ul>
+                <li><a href="ourbank.html">Home</a></li>
+                <li><a href="aboutus.html">About Us</a></li>
+                <li><a href="service.html" class="active">Services</a></li>
+                <li><a href="netbanking.html">Netbanking</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            <h2>Banking Services</h2>
+            <div class="service-options">
+                <button onclick="showCalculator('loan')">Loan Calculator</button>
+                <button onclick="showCalculator('deposit')">Deposit Calculator</button>
+            </div>
+
+            <!-- Loan Calculator -->
+            <div id="loanCalculator" class="calculator"  style="display: none">
+                <form onsubmit="event.preventDefault(); calculateEMI();">
+                    <h3>Loan Calculator</h3>
+                    <br>
+                    <label>Applicant Name</label>
+                    <input type="text" id="applicant" placeholder="Enter Name" required><br>
+
+                    <label>Type</label>
+                    <select id="loanType" onchange="updateLoanDetails()" required>
+                        <option value="home">Home</option>
+                        <option value="car">Car</option>
+                        <option value="personal">Personal</option>
+                    </select><br>
+
+                    <label>Interest</label>
+                    <input type="text" id="interestRate" disabled><br>
+
+                    <label>Tenure (Years)</label>
+                    <input type="number" id="tenure" min="1" max="30" oninput="validateLoanTenure()" required><br>
+                    <p id="tenureError" class="error-message"></p>
+
+                    <label>Amount (₹)</label>
+                    <input type="number" id="amount" oninput="validateLoanAmount()" required><br>
+                    <p id="amountError" class="error-message"></p>
+
+                    <button type="submit">Calculate EMI</button>
+                    <br>
+                    <p id="emiResult"></p>
+                </form>
+            </div>
+
+            <!-- Deposit Calculator -->
+            
+            <div id="depositCalculator" class="calculator" style="display: none;">
+                <form onsubmit="event.preventDefault(); calculateMaturity();">
+                    <h3>Deposit Calculator</h3><br>
+                    
+                    <label>Principal Amount:</label>
+                    <input type="number" id="principal" placeholder="Enter Principal Amount" min="10000" max="1000000" oninput="validateDepositAmount()" required><br>
+                    <p id="depositAmountError" class="error-message"></p>
+
+                    <label>Tenure (Years):</label>
+                    <input type="number" id="depositTenure" min="1" max="10" oninput="validateDepositTenure()" required><br>
+                    <p id="depositTenureError" class="error-message"></p>
+
+                    <label>Interest:</label>
+                    <input type="text" value="7%" disabled><br>
+
+                    <button type="submit">Calculate Maturity</button>
+                    <br><br>
+                    <p id="maturityResult"></p>
+                </form>
+            </div>
+
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Our Bank | www.ourbank.com</p>
+    </footer>
+
+    <script>
+        function showCalculator(type) {
+            document.getElementById("loanCalculator").style.display = type === "loan" ? "block" : "none";
+            document.getElementById("depositCalculator").style.display = type === "deposit" ? "block" : "none";
+        }
+
+        function updateLoanDetails() {
+            let loanType = document.getElementById("loanType").value;
+            let interestInput = document.getElementById("interestRate");
+            let tenureInput = document.getElementById("tenure");
+            let amountInput = document.getElementById("amount");
+
+            if (loanType === "home") {
+                interestInput.value = "9%";
+                tenureInput.max = 30;
+                tenureInput.min = 1;
+                amountInput.min = 500000;
+                amountInput.max = 10000000;
+            } else if (loanType === "car") {
+                interestInput.value = "11%";
+                tenureInput.max = 7;
+                tenureInput.min = 1;
+                amountInput.min = 100000;
+                amountInput.max = 1500000;
+            } else {
+                interestInput.value = "15%";
+                tenureInput.max = 5;
+                tenureInput.min = 1;
+                amountInput.min = 10000;
+                amountInput.max = 500000;
+            }
+        }
+
+        function validateLoanTenure() {
+            let tenureInput = document.getElementById("tenure");
+            let maxTenure = parseInt(tenureInput.max);
+            let tenureError = document.getElementById("tenureError");
+
+            if (tenureInput.value > maxTenure || tenureInput.value < 1) {
+                tenureError.style.color = "red";
+                tenureError.innerText = `Tenure must be between 1 and ${maxTenure} years.`;
+                return false;
+            } else {
+                tenureError.innerText = "";
+                return true;
+            }
+        }
+
+        function validateLoanAmount() {
+            let amountInput = document.getElementById("amount");
+            let minAmount = parseInt(amountInput.min);
+            let maxAmount = parseInt(amountInput.max);
+            let amountError = document.getElementById("amountError");
+
+            if (amountInput.value < minAmount || amountInput.value > maxAmount) {
+                amountError.style.color = "red";
+                amountError.innerText = `Amount should be between ₹${minAmount} and ₹${maxAmount}.`;
+                return false;
+            } else {
+                amountError.innerText = "";
+                return true;
+            }
+        }
+
+        function validateDepositTenure() {
+            let tenureInput = document.getElementById("depositTenure");
+            let maxTenure = parseInt(tenureInput.max);
+            let tenureError = document.getElementById("depositTenureError");
+
+            if (tenureInput.value > maxTenure || tenureInput.value < 1) {
+                tenureError.style.color = "red";
+                tenureError.innerText = `Tenure must be between 1 and ${maxTenure} years.`;
+                return false;
+            } else {
+                tenureError.innerText = "";
+                return true;
+            }
+        }
+
+        function validateDepositAmount() {
+            let amountInput = document.getElementById("principal");
+            let minAmount = parseInt(amountInput.min);
+            let maxAmount = parseInt(amountInput.max);
+            let amountError = document.getElementById("depositAmountError");
+
+            if (amountInput.value < minAmount || amountInput.value > maxAmount) {
+                amountError.style.color = "red";
+                amountError.innerText = `Amount should be between ₹${minAmount} and ₹${maxAmount}.`;
+                return false;
+            } else {
+                amountError.innerText = "";
+                return true;
+            }
+        }
+
+        function calculateEMI() {
+            let principal = parseFloat(document.getElementById("amount").value);
+            let interest = parseFloat(document.getElementById("interestRate").value) / 100 / 12;
+            let tenure = parseInt(document.getElementById("tenure").value);
+            let emiResult = document.getElementById("emiResult");
+
+            emiResult.innerText = "";
+
+            let tenureInMonths = tenure * 12;
+            let emi = (principal * interest * Math.pow(1 + interest, tenureInMonths)) /
+                (Math.pow(1 + interest, tenureInMonths) - 1);
+
+            emiResult.style.color = "#004080";
+            emiResult.innerHTML = `Your EMI: ₹${emi.toFixed(2)} per month`;
+        }
+
+        function calculateMaturity() {
+            let principal = parseFloat(document.getElementById("principal").value);
+            let tenure = parseInt(document.getElementById("depositTenure").value);
+            let interestRate = 7 / 100;
+            let maturityResult = document.getElementById("maturityResult");
+
+            if (isNaN(principal) || isNaN(tenure) || principal <= 0 || tenure < 1 || tenure > 10) {
+                maturityResult.style.color = "red";
+                maturityResult.innerText = "Please enter valid principal amount and tenure.";
+                return;
+            }
+
+            let maturityAmount = principal * Math.pow((1 + interestRate), tenure);
+
+            maturityResult.style.color = "#004080";
+            maturityResult.innerHTML = `Maturity Amount: ₹${maturityAmount.toFixed(2)}`;
+        }
+
+        updateLoanDetails();
+    </script>
+</body>
+</html>
